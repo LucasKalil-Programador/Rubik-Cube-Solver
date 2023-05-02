@@ -4,7 +4,13 @@ import Rubik.Colors;
 
 import java.util.Objects;
 
-public class Cube {
+/**
+ * Represent a cube with CubeFaces implement 18 possible moves lock see link to more information
+ *
+ * @see <a href="https://user-images.githubusercontent.com/82661706/235459012-29200683-60d7-4450-abda-756e54fadda8.png">Move exemples</a>
+ * @see CubeFace
+ */
+public class Cube implements Cloneable {
 
     /**
      * Variables represent the faces of cube
@@ -48,18 +54,21 @@ public class Cube {
      * Simulate a right clockwise move in Cube
      */
     public void R1() {
+        // Move corner
         byte tmp = front.values[0][2];
         front.values[0][2] = down.values[0][2];
         down.values[0][2] = back.values[2][0];
         back.values[2][0] = up.values[0][2];
         up.values[0][2] = tmp;
 
+        // Move corner
         tmp = front.values[2][2];
         front.values[2][2] = down.values[2][2];
         down.values[2][2] = back.values[0][0];
         back.values[0][0] = up.values[2][2];
         up.values[2][2] = tmp;
 
+        // Move center
         tmp = front.values[1][2];
         front.values[1][2] = down.values[1][2];
         down.values[1][2] = back.values[1][0];
@@ -70,71 +79,159 @@ public class Cube {
     }
 
     public void R2() {
-        // TODO R2
+        // swap front to back
+        // Move corner
+        byte tmp = front.values[0][2];
+        front.values[0][2] = back.values[2][0];
+        back.values[2][0] = tmp;
+
+        // Move center
+        tmp = front.values[1][2];
+        front.values[1][2] = back.values[1][0];
+        back.values[1][0] = tmp;
+
+        // Move corner
+        tmp = front.values[2][2];
+        front.values[2][2] = back.values[0][0];
+        back.values[0][0] = tmp;
+
+        // swap down to up
+        // Move corner
+        tmp = up.values[0][2];
+        up.values[0][2] = down.values[2][2];
+        down.values[2][2] = tmp;
+
+        // Move center
+        tmp = up.values[1][2];
+        up.values[1][2] = down.values[1][2];
+        down.values[1][2] = tmp;
+
+        // Move corner
+        tmp = up.values[2][2];
+        up.values[2][2] = down.values[0][2];
+        down.values[0][2] = tmp;
+
+        right.rotate180();
     }
 
     public void R_() {
-        // TODO R'
+        R2();
+        R1();
     }
 
     public void L1() {
-        // TODO L1
+        // front,  back,  left,  right,  up,  down
+        Cube tmp = new Cube(back, front, right, left, up, down);
+        up.rotate180();
+        down.rotate180();
+        tmp.R1();
+        up.rotate180();
+        down.rotate180();
     }
 
     public void L2() {
-        // TODO L2
+        L1();
+        L1();
     }
 
     public void L_() {
-        // TODO L'
+        L1();
+        L1();
+        L1();
     }
 
     public void U1() {
-        // TODO U1
+        //                 front,  back,  left,  right,  up,  down
+        Cube tmp = new Cube(front, back, down, up, left, right);
+        front.rotateClockWise();
+        left.rotateClockWise();
+        right.rotateClockWise();
+        back.rotateAntiClockWise();
+        tmp.R1();
+        front.rotateAntiClockWise();
+        left.rotateAntiClockWise();
+        right.rotateAntiClockWise();
+        back.rotateClockWise();
     }
 
     public void U2() {
-        // TODO U2
+        U1();
+        U1();
     }
 
     public void U_() {
-        // TODO U'
+        U1();
+        U1();
+        U1();
     }
 
     public void D1() {
-        // TODO D1
+        //                 front,  back,  left,  right,  up,  down
+        Cube tmp = new Cube(front, back, up, down, right, left);
+
+        front.rotateAntiClockWise();
+        left.rotateAntiClockWise();
+        right.rotateAntiClockWise();
+        back.rotateClockWise();
+        tmp.R1();
+        front.rotateClockWise();
+        left.rotateClockWise();
+        right.rotateClockWise();
+        back.rotateAntiClockWise();
     }
 
     public void D2() {
-        // TODO D2
+        D1();
+        D1();
     }
 
     public void D_() {
-        // TODO D'
+        D1();
+        D1();
+        D1();
     }
 
     public void F1() {
-        // TODO F1
+        //                 front,  back,  left,  right,  up,  down
+        Cube tmp = new Cube(left, right, back, front, up, down);
+        up.rotateAntiClockWise();
+        down.rotateClockWise();
+        tmp.R1();
+        up.rotateClockWise();
+        down.rotateAntiClockWise();
     }
 
     public void F2() {
-        // TODO F2
+        F1();
+        F1();
     }
 
     public void F_() {
-        // TODO F'
+        F1();
+        F1();
+        F1();
     }
 
     public void B1() {
-        // TODO B1
+        //                 front,  back,  left,  right,  up,  down
+        Cube tmp = new Cube(right, left, front, back, up, down);
+        up.rotateClockWise();
+        down.rotateAntiClockWise();
+
+        tmp.R1();
+        up.rotateAntiClockWise();
+        down.rotateClockWise();
     }
 
     public void B2() {
-        // TODO B2
+        B1();
+        B1();
     }
 
     public void B_() {
-        // TODO B'
+        B1();
+        B1();
+        B1();
     }
 
 
@@ -204,5 +301,21 @@ public class Cube {
         result = 31 * result + (down != null ? down.hashCode() : 0);
         result = 31 * result + (back != null ? back.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public Cube clone() {
+        try {
+            Cube clone = (Cube) super.clone();
+            clone.front = this.front.clone();
+            clone.back = this.back.clone();
+            clone.left = this.left.clone();
+            clone.right = this.right.clone();
+            clone.up = this.up.clone();
+            clone.down = this.down.clone();
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 }

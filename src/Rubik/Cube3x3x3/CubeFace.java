@@ -2,9 +2,20 @@ package Rubik.Cube3x3x3;
 
 import java.util.Arrays;
 
-public class CubeFace {
+/**
+ * Represent a Face in cube
+ */
+public class CubeFace implements Cloneable{
+
+    /**
+     * Values in face
+     */
     public Byte[][] values;
 
+    /**
+     *
+     * @param value fill the 3x3 values with value
+     */
     public CubeFace(byte value) {
         this.values = new Byte[][] {
                 {value, value, value},
@@ -13,10 +24,17 @@ public class CubeFace {
         };
     }
 
+    /**
+     *
+     * @param values custom value array
+     */
     public CubeFace(Byte[][] values){
         this.values = values;
     }
 
+    /**
+     * Rotate content clockwise
+     */
     public void rotateClockWise() {
         // rotate corner
         byte tmp = values[0][0];
@@ -33,6 +51,9 @@ public class CubeFace {
         values[1][2] = tmp;
     }
 
+    /**
+     * Rotate content anti clockwise
+     */
     public void rotateAntiClockWise() {
         // rotate corner
         byte tmp = values[0][0];
@@ -49,6 +70,9 @@ public class CubeFace {
         values[1][0] = tmp;
     }
 
+    /**
+     * rotate 180 degrees
+     */
     public void rotate180() {
         // rotate corner
         byte tmp = values[0][0];
@@ -67,6 +91,9 @@ public class CubeFace {
         values[1][2] = tmp;
     }
 
+    /**
+     * @return representation of face in string
+     */
     @Override
     public String toString() {
         return String.format("%s%s%s\r\n%s%s%s\r\n%s%s%s",
@@ -75,6 +102,11 @@ public class CubeFace {
                 values[2][0], values[2][1], values[2][2]);
     }
 
+    /**
+     * Compare content of CubeFace instances
+     * @param o other face instance
+     * @return true or false if two faces is equals
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -85,8 +117,23 @@ public class CubeFace {
         return Arrays.deepEquals(values, cubeFace.values);
     }
 
+    /**
+     * Generate hashcode based in Arrays.deepHashCode
+     * @return generated hashcode
+     */
     @Override
     public int hashCode() {
         return Arrays.deepHashCode(values);
+    }
+
+    @Override
+    public CubeFace clone() {
+        try {
+            CubeFace clone = (CubeFace) super.clone();
+            clone.values = this.values.clone();
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 }
